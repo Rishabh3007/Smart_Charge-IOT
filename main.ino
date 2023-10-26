@@ -64,3 +64,18 @@ void handleRoot() {
   html += "</body></html>";
   server.send(200, "text/html", html);
 }
+
+// Handle setting the charging timeout
+void handleSetTimeout() {
+  if (server.hasArg("timeout")) {
+    chargingTimeout = server.arg("timeout").toInt();
+  }
+  server.send(200, "text/html", "Timeout set to " + String(chargingTimeout) + " minutes");
+}
+
+// Handle charging toggling
+void handleToggleCharging() {
+  chargingEnabled = !chargingEnabled;
+  digitalWrite(relayPin, chargingEnabled ? HIGH : LOW); // Toggle the relay
+  server.send(200, "text/plain", "Charging " + String(chargingEnabled ? "Enabled" : "Disabled"));
+}
