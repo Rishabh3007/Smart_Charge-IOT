@@ -37,3 +37,30 @@ void setup() {
   // Start the server
   server.begin();
 }
+void loop() {
+  server.handleClient();
+  
+  // Implement your charging control logic here
+  if (chargingEnabled && chargingTimeout > 0) {
+    // Code to control the charging process
+    // You can check voltage, current, or other parameters and decide when to turn off the relay.
+    // For the sake of this example, we're using a simple delay to demonstrate the concept.
+    delay(chargingTimeout * 60000); // Convert minutes to milliseconds
+    digitalWrite(relayPin, LOW); // Turn off the relay (disable charging)
+    chargingEnabled = false;
+  }
+}
+
+// Handle root page
+void handleRoot() {
+  String html = "<html><body>";
+  html += "<h1>Charging Timeout Control</h1>";
+  html += "<form method='post' action='/set_timeout'>";
+  html += "Timeout (minutes): <input type='number' name='timeout' min='1'>";
+  html += "<input type='submit' value='Set Timeout'>";
+  html += "</form>";
+  html += "<p>Charging is currently: " + String(chargingEnabled ? "Enabled" : "Disabled") + "</p>";
+  html += "<a href='/toggle_charging'>Toggle Charging</a>";
+  html += "</body></html>";
+  server.send(200, "text/html", html);
+}
